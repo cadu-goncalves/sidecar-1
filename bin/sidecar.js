@@ -33,11 +33,13 @@ const usage = `Usage:
 
   Options:
     --consul  [url]      consul service url, e.g., 'http://127.0.0.1:8500'
-    --dir     [str]      consul kv dir/prefix to watch keys, e.g., '/foo/bar/'
+    --dir     [str]      consul kv dir/prefix to watch keys, e.g., 'test/images/'
     -h, --help           help
+
+  * note that consul does not like starting prefixes with a '/'
 `;
 
-if (typeof cfg.dir !== 'string') {
+if (typeof cfg.dir !== 'string' || cfg.dir[0] === '/') {
   console.error(usage);
   process.exit(1);
 }
