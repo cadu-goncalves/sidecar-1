@@ -2,6 +2,10 @@
 
 Sidecar watches a list of images from [consul kv](https://www.consul.io/intro/getting-started/kv.html) via a key prefix. The value for each key under the prefix should be a string e.g., `"image:tag"` and sidecar will pull those images automatically into docker.
 
+# USAGE
+
+Also useable as a library via `npm i docker-sidecar`.
+
 # EXAMPLE
 [![ScreenShot](https://i.imgur.com/TgL9hQO.png?1)](https://i.imgur.com/TgL9hQO.png?1)
 
