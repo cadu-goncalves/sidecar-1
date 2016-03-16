@@ -1,0 +1,40 @@
+{
+  "name": "sidecar",
+  "version": "1.0.0",
+  "description": "Watch a consul kv dir for changes to retrieve a list of images and tags and pull them into docker when kv prefix changes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "docker",
+    "image",
+    "store",
+    "pull",
+    "images"
+  ],
+  "author": "dweinstein",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.3.4",
+    "bluebird-co": "^2.1.2",
+    "bunyan": "^1.7.1",
+    "consul": "^0.24.0",
+    "dockerode": "^2.2.9",
+    "minimist": "^1.2.0",
+    "rc": "^1.1.6",
+    "xtend": "^4.0.1"
+  },
+  "bin": {
+    "sidecar": "sidecar.js"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dweinstein/sidecar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dweinstein/sidecar/issues"
+  },
+  "homepage": "https://github.com/dweinstein/sidecar#readme"
+}

@@ -1,0 +1,45 @@
+version: '2'
+
+services:
+
+  consul-server:
+    container_name: consul-server
+    image: gliderlabs/consul-server
+    environment:
+      - SERVICE_NAME=consul-server
+    ports:
+      - 8500:8500
+      - 8400:8400
+      - 8300:8300
+      - 8301:8301
+      - 8302:8302
+      - 8300:8300/udp
+      - 8301:8301/udp
+      - 8302:8302/udp
+    command: -bootstrap -bind 0.0.0.0 -client 0.0.0.0 -advertise=${HOST_IP}
+    restart: always
+
+  registrator:
+    container_name: registrator
+    image: gliderlabs/registrator
+    environment:
+      - SERVICE_NAME=registrator
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: -deregister=on-success -ip=${HOST_IP} consul://consul-server:8500
+    restart: always
+    depends_on:
+      - consul-server
+
+  sidecar:
+    build: .
+    command: node ./bin/sidecar.js --consul http://consul-server:8500 --dir "test/images"
+    container_name: sidecar
+    environment:
+      - SERVICE_NAME=registrator
+    restart: always
+    depends_on:
+      - consul-server
+      - registrator
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
