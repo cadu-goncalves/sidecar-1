@@ -1,9 +1,9 @@
-[![ScreenShot](https://i.imgur.com/TgL9hQO.png?1)](https://i.imgur.com/TgL9hQO.png?1)
 # SYNOPSIS
 
 Sidecar watches a list of images from [consul kv](https://www.consul.io/intro/getting-started/kv.html) via a key prefix. The value for each key under the prefix should be a string e.g., `"image:tag"` and sidecar will pull those images automatically into docker.
 
 # EXAMPLE
+[![ScreenShot](https://i.imgur.com/TgL9hQO.png?1)](https://i.imgur.com/TgL9hQO.png?1)
 
 Included is a [`docker-compose.yml`](./docker-compose.yml) to serve as a starting point for a set of services. This includes consul, registrator, and the sidecar service all setup for you automatically via compose.
 
