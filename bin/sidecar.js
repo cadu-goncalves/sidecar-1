@@ -10,13 +10,17 @@ const cfg = rc('sidecar', {
   consul: 'http://127.0.0.1:8500',
   docker: undefined,
   dir: undefined,
-  auth: {
+  auths: {
     consul: {
       token: undefined
     },
     docker: {
-      email: undefined,
-      auth: undefined
+      'index.docker.io': {
+        email: undefined,
+        auth: undefined,
+        username: undefined,
+        password: undefined
+      }
     }
   }
 }, require('minimist')(process.argv, {
@@ -37,6 +41,9 @@ const usage = `Usage:
     -h, --help           help
 
   * note that consul does not like starting prefixes with a '/'
+
+  Config:
+    ${cfg}
 `;
 
 if (typeof cfg.dir !== 'string' || cfg.dir[0] === '/') {
@@ -69,7 +76,7 @@ const Consul = require('consul');
 const extend = require('xtend');
 const consulOpts = extend(getConsulOpts(cfg.consul), {
   promisify: Bluebird.fromCallback,
-  token: cfg.auth.consul.token
+  token: cfg.auths.consul.token
 });
 const consul = new Consul(consulOpts);
 
@@ -79,12 +86,12 @@ co.execute(function *() {
   const puller = yield sidecar({
     consul: consul,
     docker: docker,
-    dockerAuth: cfg.auth.docker,
+    dockerAuth: cfg.auths.docker,
     dir: cfg.dir
   });
 
   puller.watch.on('error', function (err) {
-    log.error({error: err}, 'watch error');
+    log.error({err: err}, 'watch error');
   });
 
   puller.watch.on('change', function (data, res) {
@@ -97,7 +104,7 @@ co.execute(function *() {
   });
 
   puller.docker.on('finish', function (output) {
-    log.info({final_status: output.slice(-1)}, 'docker finished');
+    log.info({finalStatus: output.slice(-1)}, 'docker finished');
   });
 
   log.info('initialized sidecar');
