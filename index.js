@@ -17,7 +17,7 @@ const sidecar = method(function (opts) {
   function onFinished (err, output) {
     //  output is an array with output json parsed objects
     if (err) {
-      out.emit(err);
+      out.emit('error', err);
     } else {
       out.emit('finish', output);
     }
