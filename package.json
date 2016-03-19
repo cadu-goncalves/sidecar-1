@@ -21,8 +21,10 @@
     "bunyan": "^1.7.1",
     "consul": "^0.24.0",
     "dockerode": "^2.2.9",
+    "jsonstream2": "^1.1.1",
     "minimist": "^1.2.0",
     "rc": "^1.1.6",
+    "split2": "^2.0.1",
     "xtend": "^4.0.1"
   },
   "bin": {

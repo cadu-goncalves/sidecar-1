@@ -5,17 +5,24 @@ const Bluebird = require('bluebird');
 const co = require('bluebird-co');
 const promisifyAll = Bluebird.promisifyAll;
 const assert = require('assert');
-const method = Bluebird.method;
+const getEvents = require('./docker-events');
 
-const sidecar = method(function (opts) {
+const sidecar = co.wrap(function *(opts) {
   opts = opts || {};
   const consul = opts.consul;
   const docker = promisifyAll(opts.docker);
   const out = new EventEmitter();
   const dir = opts.dir;
   const dockerAuth = opts.dockerAuth;
+  const dockerEvents = yield getEvents(docker);
+
+  dockerEvents.on('data', (event) => {
+    if (typeof event.status === 'string') {
+      out.emit(event.status, event);
+    }
+  });
+
   function onFinished (err, output) {
-    //  output is an array with output json parsed objects
     if (err) {
       out.emit('error', err);
     } else {
@@ -33,7 +40,7 @@ const sidecar = method(function (opts) {
       }
       const keyval = [].concat(maybe_kv);
       const images = keyval.filter(Boolean).map(k => k.Value).filter(Boolean);
-      debug('images: %j', images);
+      debug('images: %j, auths: %j', images, dockerAuth);
       for (let image of images) {
         const registries = Object.keys(dockerAuth).filter((registry) => image.indexOf(registry) === 0);
         assert(registries.length <= 1);

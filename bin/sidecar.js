@@ -5,7 +5,14 @@ const assert = require('assert');
 const bunyan = require('bunyan');
 const log = bunyan.createLogger({name: 'sidecar', level: 'debug'});
 const rc = require('rc');
+const os = require('os');
+const join = require('path').join;
 
+let dockerAuth;
+try {
+  dockerAuth = require(join(os.homedir(), '.docker', 'config.json')).auths;
+} catch (_) {
+}
 const cfg = rc('sidecar', {
   consul: 'http://127.0.0.1:8500',
   docker: undefined,
@@ -14,14 +21,7 @@ const cfg = rc('sidecar', {
     consul: {
       token: undefined
     },
-    docker: {
-      'index.docker.io': {
-        email: undefined,
-        auth: undefined,
-        username: undefined,
-        password: undefined
-      }
-    }
+    docker: dockerAuth
   }
 }, require('minimist')(process.argv, {
   alias: {
@@ -90,21 +90,27 @@ co.execute(function *() {
     dir: cfg.dir
   });
 
-  puller.watch.on('error', function (err) {
+  puller.watch.on('error', (err) => {
     log.error({err: err}, 'watch error');
   });
 
-  puller.watch.on('change', function (data, res) {
+  puller.watch.on('change', (data, res) => {
     log.debug({data: data}, 'dir change');
     puller.pull();
   });
 
-  puller.docker.on('error', function (err) {
+  puller.docker.on('error', (err) => {
+    console.error(err.stack);
     log.error({err: err}, 'docker error');
   });
 
-  puller.docker.on('finish', function (output) {
-    log.info({finalStatus: output.slice(-1)}, 'docker finished');
+  puller.docker.on('pull', (pull) => {
+    log.info({pull: pull}, 'docker pull');
+  });
+
+  puller.docker.on('engine_connect', (event) => {
+    log.debug({event: event}, 'engine_connnect');
+    puller.pull();
   });
 
   log.info('initialized sidecar');
