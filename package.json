@@ -1,6 +1,6 @@
 {
   "name": "docker-sidecar",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Watch a consul kv dir for changes to retrieve a list of images and tags and pull them into docker when kv prefix changes.",
   "main": "index.js",
   "scripts": {
