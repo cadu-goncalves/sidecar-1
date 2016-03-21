@@ -32,19 +32,19 @@ const sidecar = co.wrap(function *(opts) {
   function onProgress (event) {
     out.emit('progress', event);
   }
-  const pull = co.wrap(function *() {
+  const pull = co.wrap(function *(bootstrap) {
     try {
       const maybe_kv = yield consul.kv.get({key: dir, recurse: true});
-      if (!maybe_kv) {
+      if (!maybe_kv && !bootstrap) {
         return;
       }
       const keyval = [].concat(maybe_kv);
-      const images = keyval.filter(Boolean).map(k => k.Value).filter(Boolean);
+      const images = keyval.filter(Boolean).map(k => k.Value).concat(bootstrap).filter(Boolean);
       debug('images: %j, auths: %j', images, dockerAuth);
       for (let image of images) {
         const registries = Object.keys(dockerAuth).filter((registry) => image.indexOf(registry) === 0);
         assert(registries.length <= 1);
-        debug('using auth', dockerAuth[registries[0]]);
+        debug('using auth %j for image %s', dockerAuth[registries[0]], image);
         const stream = yield docker.pullAsync(image, { authconfig: dockerAuth[registries[0]] });
         docker.modem.followProgress(stream, onFinished, onProgress);
       }

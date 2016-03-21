@@ -33,7 +33,7 @@ services:
 
   sidecar:
     build: .
-    command: node ./bin/sidecar.js --consul http://consul-server:8500 --dir "test/images"
+    command: node ./bin/sidecar.js --consul http://consul-server:8500 --dir "test/images" --bootstrap ./bootstrap.example.json
     container_name: sidecar
     environment:
       - SERVICE_NAME=registrator
@@ -43,3 +43,4 @@ services:
       - registrator
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ${HOME}/.docker:/root/.docker

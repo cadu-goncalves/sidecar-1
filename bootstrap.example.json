@@ -1,0 +1,4 @@
+[
+  "busybox:latest",
+  "mhart/alpine-node:latest"
+]

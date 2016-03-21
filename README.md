@@ -10,6 +10,12 @@ Sidecar watches a list of images from [consul kv](https://www.consul.io/intro/ge
 - Run: `sidecar --consul http://127.0.0.1:8500 --dir 'test/images'`
 - Also useable as a library via `npm i docker-sidecar` or as a Docker image.
 
+## bootstrap
+
+- In addition to pulling the current image list from the consul key-values, you can also specify the `--bootstrap` option and pass a path to a file with images to download at startup.
+  - For example `sidecar --consul http://127.0.0.1:8500 --dir 'test/images' --bootstrap /path/to/bootstrap.json`
+  - See the [bootstrap example json file](./bootstrap.example.json)
+
 ## auth tokens
 If using a private registry or a private docker image, `sidecar` uses the standard `~/.docker/config.json` location for auth credentials.
 
